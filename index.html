@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CRF Registries Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="map"></div>
+  <div class="country-list" id="countryList"></div>
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+  <script src="data.js"></script>
+
+  <script>
+    // Map setup
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/light-v11',
+      center: [20, 20],
+      zoom: 1.0,
+      projection: 'mercator' // Ensures flat map
+    });
+
+    // Disable zooming
+    map.scrollZoom.disable();    // disables scroll wheel and touchpad pinch-zoom
+    //map.doubleClickZoom.disable(); 
+    //map.boxZoom.disable();
+    map.touchZoomRotate.disable(); // disables pinch zoom and rotation on touch devices
+
+    // Add points to map
+    let markers = [];
+    let selectedCountry = null;
+    //let popup = null;
+    let popup = new mapboxgl.Popup({ closeOnClick: true, offset: 25 });
+
+    function addMarkers() {
+  markers.forEach(m => m.remove());
+  markers = [];
+  registries.forEach(reg => {
+    const el = document.createElement('div');
+    el.style.width = '18px';
+    el.style.height = '18px';
+    el.style.borderRadius = '50%';
+    el.style.background = (selectedCountry === reg.country) ? '#0a2540' : '#812383';
+    el.style.border = '2px solid #fff';
+    el.style.boxShadow = '0 0 4px rgba(0,0,0,0.15)';
+    el.style.cursor = 'pointer';
+
+    const marker = new mapboxgl.Marker({ element: el })
+      .setLngLat(reg.coords)
+      .addTo(map);
+
+    // Attach click to marker
+    marker.getElement().addEventListener('click', (e) => {
+      e.stopPropagation(); // prevent map click from firing
+      showPopup(reg);
+    });
+
+
+    markers.push(marker);
+  });
+}
+
+function showPopup(reg) {
+  selectedCountry = reg.country;
+
+  // Update marker colors
+  markers.forEach(marker => {
+    const el = marker.getElement();
+    const regData = registries.find(
+      r => r.coords[0] === marker.getLngLat().lng &&
+           r.coords[1] === marker.getLngLat().lat
+    );
+    if (regData) {
+      el.style.background = (regData.country === selectedCountry) ? '#0a2540' : '#812383';
+    }
+  });
+
+  // Always close popup before opening new
+  popup.remove();
+  popup
+    .setLngLat(reg.coords)
+    .setHTML(`
+      <img class="popup-logo" src="./logo/${reg.logo}" alt="${reg.country} logo" />
+      <a class="popup-link" href="${reg.website}" target="_blank">${reg.name}</a>
+    `)
+    .setMaxWidth("350px")
+    .addTo(map);
+
+  highlightCountryInList();
+}
+
+    // Country list
+    function buildCountryList() {
+      const listDiv = document.getElementById('countryList');
+      listDiv.innerHTML = '';
+      // Split into 5 columns
+      const cols = [[],[],[],[],[]];
+      registries.forEach((reg, i) => cols[i % 5].push(reg));
+      cols.forEach(colRegs => {
+        const colDiv = document.createElement('div');
+        colDiv.className = 'country-col';
+        colRegs.forEach(reg => {
+          const btn = document.createElement('button');
+          btn.className = 'country-btn';
+          btn.textContent = reg.country;
+          btn.onclick = () => showPopup(reg);
+          colDiv.appendChild(btn);
+        });
+        listDiv.appendChild(colDiv);
+      });
+      highlightCountryInList();
+    }
+
+    function highlightCountryInList() {
+      document.querySelectorAll('.country-btn').forEach(btn => {
+        if (btn.textContent === selectedCountry) {
+          btn.classList.add('selected');
+        } else {
+          btn.classList.remove('selected');
+        }
+      });
+    }
+
+    map.on('load', () => {
+    // Hide country borders and labels
+    const layers = map.getStyle().layers;
+    layers.forEach(layer => {
+      // Hide country borders
+      if (
+        layer.id.includes('country') && 
+        (layer.type === 'line' || layer.type === 'fill')
+      ) {
+        map.setLayoutProperty(layer.id, 'visibility', 'none');
+      }
+      // Hide country labels
+      if (
+        layer.id.includes('country-label') ||
+        layer.id.includes('country-label-lg') ||
+        layer.id.includes('country-label-md') ||
+        layer.id.includes('country-label-sm')
+      ) {
+        map.setLayoutProperty(layer.id, 'visibility', 'none');
+      }
+    });
+
+    // close the popup when clicking outside on the map
+    map.on('click', (e) => {
+      // If popup is open and click is NOT on a marker element -> close it
+      if (popup && popup.isOpen()) {
+        // Check if clicked element is one of our marker divs
+        const isMarkerClick = e.originalEvent.target.closest('.mapboxgl-marker');
+        if (!isMarkerClick) {
+          popup.remove();
+          selectedCountry = null;
+          highlightCountryInList();
+
+          // Reset all markers back to default color
+          markers.forEach(marker => {
+            const el = marker.getElement();
+            el.style.background = '#812383';
+          });
+        }
+      }
+    });
+
+
+    addMarkers();
+    buildCountryList();
+  });
+  </script>
+</body>
+</html>
