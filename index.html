@@ -18,8 +18,8 @@
     const map = new mapboxgl.Map({
       container: 'map',
       style: 'mapbox://styles/mapbox/light-v11',
-      center: [20, 20],
-      zoom: 1.0,
+      center: [31, 12],
+      zoom: 0.2,
       projection: 'mercator' // Ensures flat map
     });
 
@@ -96,9 +96,9 @@ function showPopup(reg) {
     function buildCountryList() {
       const listDiv = document.getElementById('countryList');
       listDiv.innerHTML = '';
-      // Split into 5 columns
+      // Split into 2 columns
       const cols = [[],[],[],[],[]];
-      registries.forEach((reg, i) => cols[i % 5].push(reg));
+      registries.forEach((reg, i) => cols[i % 2].push(reg));
       cols.forEach(colRegs => {
         const colDiv = document.createElement('div');
         colDiv.className = 'country-col';
