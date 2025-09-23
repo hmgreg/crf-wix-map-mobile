@@ -9,7 +9,10 @@
 </head>
 <body>
   <div id="map"></div>
-  <div class="country-list" id="countryList"></div>
+  <select id="countryDropdown" class="country-dropdown">
+    <option value="">Select a country...</option>
+  </select>
+
   <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
   <script src="data.js"></script>
 
@@ -92,36 +95,39 @@ function showPopup(reg) {
   highlightCountryInList();
 }
 
-    // Country list
+    // Country dropdown
     function buildCountryList() {
-      const listDiv = document.getElementById('countryList');
-      listDiv.innerHTML = '';
-      // Split into 2 columns
-      const cols = [[],[],[],[],[]];
-      registries.forEach((reg, i) => cols[i % 2].push(reg));
-      cols.forEach(colRegs => {
-        const colDiv = document.createElement('div');
-        colDiv.className = 'country-col';
-        colRegs.forEach(reg => {
-          const btn = document.createElement('button');
-          btn.className = 'country-btn';
-          btn.textContent = reg.country;
-          btn.onclick = () => showPopup(reg);
-          colDiv.appendChild(btn);
-        });
-        listDiv.appendChild(colDiv);
+      const dropdown = document.getElementById('countryDropdown');
+      dropdown.innerHTML = '<option value="">Select a country</option>';
+
+      registries.forEach(reg => {
+        const option = document.createElement('option');
+        option.value = reg.country;
+        option.textContent = reg.country;
+        dropdown.appendChild(option);
       });
+
+      dropdown.onchange = () => {
+        const selected = registries.find(r => r.country === dropdown.value);
+        if (selected) {
+          showPopup(selected);
+        }
+      };
+
       highlightCountryInList();
     }
 
     function highlightCountryInList() {
-      document.querySelectorAll('.country-btn').forEach(btn => {
-        if (btn.textContent === selectedCountry) {
-          btn.classList.add('selected');
-        } else {
-          btn.classList.remove('selected');
+      const dropdown = document.getElementById('countryDropdown');
+      if (!dropdown) return;
+
+      for (let i = 0; i < dropdown.options.length; i++) {
+        if (dropdown.options[i].value === selectedCountry) {
+          dropdown.selectedIndex = i;
+          return;
         }
-      });
+      }
+      dropdown.selectedIndex = 0; // reset to "Select a country..."
     }
 
     map.on('load', () => {

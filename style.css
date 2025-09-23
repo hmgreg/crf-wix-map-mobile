@@ -7,35 +7,11 @@ body {
     width: 100vw; 
     height: 35vh; 
 }
-.country-list {
-    display: flex;
-    flex-wrap: wrap;
-    background: #fff;
-    padding: 20px 0;
-    border-top: 1px solid #eee;
-    justify-content: center;
-}
-.country-col {
-    flex: 1 1 18%;
-    min-width: 180px;
-    padding: 0 10px;
-}
-.country-btn {
-    display: block;
-    width: 100%;
-    background: none;
-    border: none;
-    color: #4b2e83;
-    font-size: 14px;
-    text-align: left;
-    padding: 5px 0;
-    cursor: pointer;
-    transition: color 0.2s;
-    text-align: center;
-}
-.country-btn.selected { 
-    color: #0a2540; 
-    font-weight: bold; 
+.country-dropdown {
+    margin: 10px 0px;
+    padding: 8px 4px;
+    font-size: 16px;
+    max-width: 300px;
 }
 .mapboxgl-popup-content {
     width: 280px;
