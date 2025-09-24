@@ -4,8 +4,8 @@ body {
     background: #ffffff; 
 }
 #map { 
-    width: 100vw; 
-    height: 35vh; 
+    width: 100vw;
+    height: 400px; 
 }
 .country-dropdown {
     margin: 10px 0px;
