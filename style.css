@@ -38,3 +38,6 @@ body {
     display: block;
     margin-bottom: 6px;
 }
+.popup-link:focus {
+    outline: none;
+}
