@@ -111,6 +111,22 @@ function showPopup(reg) {
         const selected = registries.find(r => r.country === dropdown.value);
         if (selected) {
           showPopup(selected);
+
+          // Get the map container height
+          const mapHeight = map.getContainer().clientHeight;
+
+          // Center the map on the selected country
+          map.flyTo({
+            center: selected.coords,
+            zoom: 0.2,
+            essential: true,
+            padding: {
+              top: mapHeight * 0.5,  // Push the point down by ~50% of map height
+              bottom: 0,
+              left: 0,
+              right: 0
+            }
+          });
         }
       };
 
