@@ -59,6 +59,22 @@
     marker.getElement().addEventListener('click', (e) => {
       e.stopPropagation(); // prevent map click from firing
       showPopup(reg);
+
+      // Get the map container height
+      const mapHeight = map.getContainer().clientHeight;
+
+      // Fly to the point, same as dropdown
+      map.flyTo({
+        center: reg.coords,
+        zoom: 0.2,
+        essential: true,
+        padding: {
+          top: mapHeight * 0.5,  // Push the point down ~50% of map height
+          bottom: 0,
+          left: 0,
+          right: 0
+        }
+      });
     });
 
 
