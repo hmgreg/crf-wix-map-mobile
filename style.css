@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400&display=swap');
+
 body {
     margin:0; 
     font-family: Arial, sans-serif; 
@@ -7,12 +9,7 @@ body {
     width: 100vw;
     height: 400px; 
 }
-.country-dropdown {
-    margin: 10px 0px;
-    padding: 8px 4px;
-    font-size: 16px;
-    max-width: 300px;
-}
+
 .mapboxgl-popup-content {
     width: 280px;
     min-height: 120px;
@@ -40,4 +37,30 @@ body {
 }
 .popup-link:focus {
     outline: none;
+}
+
+.country-dropdown {
+    margin: 10px 0px;
+    padding: 15px 30px 15px 8px;
+    max-width: 300px;
+    height: 66px;
+    font-family: montserrat, Arial, Helvetica, sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    background-color: #fff;
+    border: 1px solid #000;
+    color: #888888;
+    cursor: pointer;
+    outline: none;
+}
+.country-dropdown:hover {
+    border-color: #000;
+}
+.country-dropdown:focus {
+    border-color: #666;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.country-dropdown option {
+    color: #000 !important;
 }
